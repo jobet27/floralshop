@@ -53,35 +53,39 @@ get_header(); ?>
                     <div>
                         <div class="product-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px;">
                             <?php 
-                            $boutique_products = [
-                                ['name' => 'Ethereal Blush', 'cat' => 'Romantic', 'price' => '$85', 'img' => 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9'],
-                                ['name' => 'Forest Whisper', 'cat' => 'Rustic', 'price' => '$75', 'img' => 'https://images.unsplash.com/photo-1490750967868-88aa4486c946'],
-                                ['name' => 'Golden Hour', 'cat' => 'Summer', 'price' => '$95', 'img' => 'https://images.unsplash.com/photo-1508784411316-02b8cd4d3a3a'],
-                                ['name' => 'Velvet Crimson', 'cat' => 'Classic', 'price' => '$110', 'img' => 'https://images.unsplash.com/photo-1519378304606-27b95d85760d'],
-                                ['name' => 'Midnight Lily', 'cat' => 'Elegant', 'price' => '$125', 'img' => 'https://images.unsplash.com/photo-1533276395701-d2b635a24929'],
-                                ['name' => 'Spring Awakening', 'cat' => 'Seasonal', 'price' => '$65', 'img' => 'https://images.unsplash.com/photo-1525310212502-b4a72477c72c'],
-                                ['name' => 'Ivory Dream', 'cat' => 'Wedding', 'price' => '$150', 'img' => 'https://images.unsplash.com/photo-1548849170-e662c057aab7'],
-                                ['name' => 'Sunset Peony', 'cat' => 'Seasonal', 'price' => '$90', 'img' => 'https://images.unsplash.com/photo-1464226184884-fa280b87c399'],
-                                ['name' => 'Wild Meadow', 'cat' => 'Rustic', 'price' => '$60', 'img' => 'https://images.unsplash.com/photo-1496062031456-07b8f162a322'],
-                                ['name' => 'Orchid Elegance', 'cat' => 'Classic', 'price' => '$180', 'img' => 'https://images.unsplash.com/photo-1512428813834-c702c7702b78'],
-                                ['name' => 'Morning Dew', 'cat' => 'Romantic', 'price' => '$70', 'img' => 'https://images.unsplash.com/photo-1507290439931-a861b5a38200'],
-                                ['name' => 'Autumn Gold', 'cat' => 'Seasonal', 'price' => '$85', 'img' => 'https://images.unsplash.com/photo-1502977249166-824b3a8a4d6d'],
-                            ];
-                            foreach($boutique_products as $product): ?>
+                            $flower_query = new WP_Query(array(
+                                'post_type' => 'flower',
+                                'posts_per_page' => -1,
+                            ));
+
+                            if ($flower_query->have_posts()):
+                                while ($flower_query->have_posts()): $flower_query->the_post();
+                                    $category = get_the_terms(get_the_ID(), 'flower_cat');
+                                    $price = get_post_meta(get_the_ID(), 'flower_price', true) ?: '$0';
+                            ?>
                             <div class="flower-card reveal">
                                 <div class="card-img-wrapper">
-                                    <img src="<?php echo $product['img']; ?>?auto=format&fit=crop&w=800&q=80" alt="<?php echo $product['name']; ?>">
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('large'); ?>
+                                    <?php else: ?>
+                                        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=800&q=80" alt="Placeholder">
+                                    <?php endif; ?>
                                 </div>
                                 <div class="card-body">
-                                    <span class="card-category"><?php echo $product['cat']; ?></span>
-                                    <h3 style="font-size: 1.5rem;"><?php echo $product['name']; ?></h3>
+                                    <span class="card-category"><?php echo $category ? $category[0]->name : 'Uncategorized'; ?></span>
+                                    <h3 style="font-size: 1.5rem;"><?php the_title(); ?></h3>
                                     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px;">
-                                        <p class="text-gold" style="font-weight: 700; font-size: 1.25rem; margin-bottom: 0;"><?php echo $product['price']; ?></p>
-                                        <a href="#" style="color: white; font-size: 0.75rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;">Add to Cart</a>
+                                        <p class="text-gold" style="font-weight: 700; font-size: 1.25rem; margin-bottom: 0;"><?php echo $price; ?></p>
+                                        <a href="<?php the_permalink(); ?>" style="color: white; font-size: 0.75rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;">Add to Cart</a>
                                     </div>
                                 </div>
                             </div>
-                            <?php endforeach; ?>
+                            <?php 
+                                endwhile;
+                                wp_reset_postdata();
+                            else:
+                                echo '<p>Our boutique is currently being curated. Please check back soon.</p>';
+                            endif; ?>
                         </div>
                     </div>
                 </div>
