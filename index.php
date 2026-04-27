@@ -27,29 +27,39 @@
 
                 <div class="product-grid">
                     <?php 
-                    $sample_products = [
-                        ['name' => 'Ethereal Blush', 'cat' => 'Romantic', 'price' => '$85', 'img' => 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9'],
-                        ['name' => 'Forest Whisper', 'cat' => 'Rustic', 'price' => '$75', 'img' => 'https://images.unsplash.com/photo-1490750967868-88aa4486c946'],
-                        ['name' => 'Golden Hour', 'cat' => 'Summer', 'price' => '$95', 'img' => 'https://images.unsplash.com/photo-1508784411316-02b8cd4d3a3a'],
-                        ['name' => 'Velvet Crimson', 'cat' => 'Classic', 'price' => '$110', 'img' => 'https://images.unsplash.com/photo-1519378304606-27b95d85760d'],
-                        ['name' => 'Midnight Lily', 'cat' => 'Elegant', 'price' => '$125', 'img' => 'https://images.unsplash.com/photo-1533276395701-d2b635a24929'],
-                        ['name' => 'Spring Awakening', 'cat' => 'Seasonal', 'price' => '$65', 'img' => 'https://images.unsplash.com/photo-1525310212502-b4a72477c72c'],
-                    ];
-                    foreach($sample_products as $product): ?>
+                    $flower_query = new WP_Query(array(
+                        'post_type' => 'flower',
+                        'posts_per_page' => 6,
+                    ));
+
+                    if ($flower_query->have_posts()):
+                        while ($flower_query->have_posts()): $flower_query->the_post();
+                            $category = get_the_terms(get_the_ID(), 'flower_cat');
+                            $price = get_post_meta(get_the_ID(), '_flower_price', true) ?: '$' . rand(50, 150);
+                    ?>
                     <div class="flower-card reveal">
                         <div class="card-img-wrapper">
-                            <img src="<?php echo $product['img']; ?>?auto=format&fit=crop&w=800&q=80" alt="<?php echo $product['name']; ?>">
+                            <?php if (has_post_thumbnail()): ?>
+                                <?php the_post_thumbnail('large'); ?>
+                            <?php else: ?>
+                                <img src="https://images.unsplash.com/photo-1519378304606-27b95d85760d?auto=format&fit=crop&w=800&q=80" alt="Placeholder">
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
-                            <span class="card-category"><?php echo $product['cat']; ?></span>
-                            <h3><?php echo $product['name']; ?></h3>
+                            <span class="card-category"><?php echo $category ? $category[0]->name : 'Seasonal'; ?></span>
+                            <h3><?php the_title(); ?></h3>
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px;">
-                                <p class="text-gold" style="font-weight: 700; font-size: 1.5rem; margin-bottom: 0;"><?php echo $product['price']; ?></p>
-                                <a href="#" style="color: white; font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;">Add to Bouquet</a>
+                                <p class="text-gold" style="font-weight: 700; font-size: 1.5rem; margin-bottom: 0;"><?php echo $price; ?></p>
+                                <a href="<?php the_permalink(); ?>" style="color: white; font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;">View Details</a>
                             </div>
                         </div>
                     </div>
-                    <?php endforeach; ?>
+                    <?php 
+                        endwhile;
+                        wp_reset_postdata();
+                    else:
+                        echo '<p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Our boutique is currently being curated. Please check back soon.</p>';
+                    endif; ?>
                 </div>
             </div>
         </section>

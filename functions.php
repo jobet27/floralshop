@@ -130,5 +130,33 @@ function floralshop_register_cpt() {
         'rewrite'           => array('slug' => 'flower-category'),
         'show_in_rest'      => true,
     ));
+
+    // 3. Workshop Custom Post Type
+    register_post_type('workshop', array(
+        'labels' => array(
+            'name' => 'Workshops',
+            'singular_name' => 'Workshop',
+            'add_new' => 'Add New Workshop',
+            'menu_name' => 'Workshops'
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'),
+        'menu_icon' => 'dashicons-welcome-learn-more',
+        'show_in_rest' => true,
+    ));
+
+    // 4. Testimonial Custom Post Type
+    register_post_type('testimonial', array(
+        'labels' => array(
+            'name' => 'Testimonials',
+            'singular_name' => 'Testimonial',
+            'menu_name' => 'Testimonials'
+        ),
+        'public' => true,
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'menu_icon' => 'dashicons-format-quote',
+        'show_in_rest' => true,
+    ));
 }
 add_action('init', 'floralshop_register_cpt');

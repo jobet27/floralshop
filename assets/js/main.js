@@ -23,13 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addEventListener('scroll', handleHeaderScroll);
-    handleHeaderScroll(); // Run on load
+    handleHeaderScroll();
 
     // 2. Intersection Observer for Reveal Animations
     const revealElements = document.querySelectorAll('.reveal');
-    
     const revealOptions = {
-        threshold: 0.05,
+        threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
     };
 
@@ -42,41 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, revealOptions);
 
-    revealElements.forEach(el => {
-        revealObserver.observe(el);
-    });
+    revealElements.forEach(el => revealObserver.observe(el));
 
-    // 3. Mobile Menu Toggle (Simplified for professional demo)
-    const createMobileToggle = () => {
-        const navContainer = document.querySelector('.nav-container');
-        if (!navContainer) return;
-
-        const toggle = document.createElement('button');
-        toggle.className = 'mobile-nav-toggle';
-        toggle.innerHTML = '<span></span><span></span><span></span>';
-        toggle.setAttribute('aria-label', 'Toggle Navigation');
-        
-        navContainer.appendChild(toggle);
-
-        toggle.addEventListener('click', () => {
-            const nav = document.querySelector('.nav-menu');
-            nav.classList.toggle('mobile-active');
-            toggle.classList.toggle('toggle-active');
-            document.body.classList.toggle('no-scroll');
-        });
-    };
-
-    createMobileToggle();
-
-    // 4. Smooth Scrolling for Anchor Links
+    // 3. Smooth Scrolling for Anchor Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
-            if (href === '#') return;
+            if (href === '#' || href === '') return;
             
-            e.preventDefault();
             const target = document.querySelector(href);
             if (target) {
+                e.preventDefault();
                 target.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
@@ -85,28 +60,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. Hero Parallax Zoom
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        window.addEventListener('scroll', () => {
-            const scroll = window.pageYOffset;
-            hero.style.backgroundPositionY = `${scroll * 0.5}px`;
+    // 4. Dropdown Hide on Click Logic
+    const dropdownLinks = document.querySelectorAll('.luxury-dropdown a');
+    dropdownLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const dropdown = link.closest('.luxury-dropdown');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+                setTimeout(() => {
+                    dropdown.style.removeProperty('display');
+                }, 500);
+            }
         });
-    }
+    });
 
-    // 6. Magnetic Button Effect
-    const magneticBtns = document.querySelectorAll('.btn-primary:not(.no-magnetic)');
-    magneticBtns.forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const position = btn.getBoundingClientRect();
-            const x = e.pageX - position.left - position.width / 2;
-            const y = e.pageY - position.top - position.height / 2;
-            
-            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-        });
-        
-        btn.addEventListener('mouseout', () => {
-            btn.style.transform = `translate(0px, 0px)`;
-        });
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.has-dropdown')) {
+            document.querySelectorAll('.luxury-dropdown').forEach(dropdown => {
+                dropdown.style.display = 'none';
+                setTimeout(() => {
+                    dropdown.style.removeProperty('display');
+                }, 100);
+            });
+        }
     });
 });
