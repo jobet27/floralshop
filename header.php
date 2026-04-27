@@ -17,11 +17,11 @@
 
             <nav class="nav-menu">
                 <ul id="primary-menu" class="menu">
-                    <li><a href="#hero" class="nav-link">Home</a></li>
-                    <li><a href="#boutique" class="nav-link">Boutique</a></li>
-                    <li><a href="#occasions" class="nav-link">Occasions</a></li>
-                    <li><a href="#story" class="nav-link">Our Story</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="nav-link">Home</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/boutique' ) ); ?>" class="nav-link">Boutique</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/occasions' ) ); ?>" class="nav-link">Occasions</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/our-story' ) ); ?>" class="nav-link">Our Story</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
 
